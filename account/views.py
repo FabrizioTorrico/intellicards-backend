@@ -3,9 +3,12 @@ from rest_framework.response import Response
 from rest_framework import permissions, status
 from django.contrib.auth.models import User
 from .serializers import UserSerializer
+import re
 
 
 class RegisterView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
     def post(self, request):
         try:
             data = request.data
@@ -13,9 +16,11 @@ class RegisterView(APIView):
             first_name = data["first_name"]
             last_name = data["last_name"]
             username = data["username"]
+            email = data["email"]
             password = data["password"]
             re_password = data["re_password"]
 
+            emailRegex = "^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$"
             # CHEQUEAMOS SI SE PUEDE CREAR EL USUARIO
             if password != re_password:
                 return Response(
@@ -28,8 +33,14 @@ class RegisterView(APIView):
                     {"error": "La contraseña debe contener al menos 8 digitos"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
-            if User.objects.filter(username=username).exists():
+            if not re.search(emailRegex, email):
+                return Response(
+                    {"error": "No es un email"}, status=status.HTTP_400_BAD_REQUEST
+                )
+            if (
+                User.objects.filter(username=username).exists()
+                or User.objects.filter(email=email).exists()
+            ):
                 return Response(
                     {"error": "El usuario ya existe"},
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -39,6 +50,7 @@ class RegisterView(APIView):
             user = User.objects.create_user(
                 first_name=first_name,
                 last_name=last_name,
+                email=email,
                 username=username,
                 password=password,
             )
