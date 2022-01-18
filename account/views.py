@@ -6,13 +6,12 @@ from .serializers import UserSerializer
 import re
 
 
-class RegisterView(APIView):
+class SignUpView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
         try:
             data = request.data
-            print(data)
             first_name = data["first_name"]
             last_name = data["last_name"]
             username = data["username"]
