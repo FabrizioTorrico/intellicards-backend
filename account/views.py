@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
 from django.contrib.auth.models import User
-from .serializers import UserSerializer
+from .serializers import DeckSerializer, UserSerializer
 import re
 
 
@@ -80,6 +80,7 @@ class LoadUserView(APIView):
         try:
             user = request.user
             user = UserSerializer(user)
+            print(user.data)
 
             return Response({"user": user.data}, status=status.HTTP_200_OK)
         except:
