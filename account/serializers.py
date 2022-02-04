@@ -9,6 +9,7 @@ class CardSerializer(serializers.ModelSerializer):
         fields = (
             "front",
             "back",
+            "deck_type",
         )
 
 
@@ -19,7 +20,7 @@ class DeckSerializer(serializers.ModelSerializer):
         model = Deck
         fields = (
             "title",
-            "creationDate",
+            "creation_date",
             "cards",
         )
 

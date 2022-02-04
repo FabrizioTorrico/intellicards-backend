@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
+from django.core.validators import validate_email
 from django.contrib.auth.models import User
 from .serializers import DeckSerializer, UserSerializer
 import re
@@ -19,8 +20,9 @@ class SignUpView(APIView):
             password = data["password"]
             re_password = data["re_password"]
 
-            emailRegex = "^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$"
             # CHEQUEAMOS SI SE PUEDE CREAR EL USUARIO
+            validate_email(email)
+
             if password != re_password:
                 return Response(
                     {"error": "Las constrseñas no coinciden"},
@@ -31,10 +33,6 @@ class SignUpView(APIView):
                 return Response(
                     {"error": "La contraseña debe contener al menos 8 digitos"},
                     status=status.HTTP_400_BAD_REQUEST,
-                )
-            if not re.search(emailRegex, email):
-                return Response(
-                    {"error": "No es un email"}, status=status.HTTP_400_BAD_REQUEST
                 )
             if (
                 User.objects.filter(username=username).exists()
@@ -80,7 +78,6 @@ class LoadUserView(APIView):
         try:
             user = request.user
             user = UserSerializer(user)
-            print(user.data)
 
             return Response({"user": user.data}, status=status.HTTP_200_OK)
         except:
