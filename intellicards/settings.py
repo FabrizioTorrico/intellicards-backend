@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 import environ
-import django_heroku
 
 # Initialise environment variables
 env = environ.Env()
@@ -158,5 +157,3 @@ CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-django_heroku.settings(locals())
